@@ -1,9 +1,46 @@
+import { Contract, providers, utils } from "ethers";
+import Web3Modal from "web3modal";
+import React, { useEffect, useRef, useState)} from "react";
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
+  // walletConnected keeps track of whether or not there is a wallet connected
+  const [walletConnected, setwalletConnected] = useState(false);
+  // Loading is set to true when the site is waiting
+  const [loading, setLoading] = useState(false);
+  // Reference to web3Modal
+  const web3ModalRef = useRef();
+
+  /*
+    connectWallet: Connects the MetaMask wallet
+    */
+  const connectWallet = async () => {
+    try {
+      // Get the provider from web3Modal
+      // When used for the first time, it prompts the user to connect their wallet
+      await getProviderOrSigner();
+      setwalletConnected(true);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+    /**
+   * Returns a Provider or Signer object representing the Ethereum RPC with or without the
+   * signing capabilities of metamask attached
+   *
+   * @param {*} needSigner - True if you need the signer, default false otherwise
+   */
+  const getProviderOrSigner = async (needSigner = false) => {
+    // Connect to Metamask
+    // Access web3modal current value
+    const provider = await web3ModalRef.current.connect();
+    const web3Provider = new providers.Web3Provider(provider);
+  }
+
   return (
     <div className={styles.container}>
       <Head>
