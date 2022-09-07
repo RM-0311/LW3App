@@ -64,6 +64,16 @@ const Home: NextPage = () => {
       }
     }, [walletConnected]);
 
+    const renderButton = () => {
+      // If wallet is not connected, display connect wallet button
+      if (!walletConnected) {
+        return (
+          <button class="padding-10px bg-black text-white" onClick={connectWallet}>
+            Connect Wallet
+          </button>
+        );
+      }
+    }
 
   return (
     <div className={styles.container}>
@@ -77,6 +87,9 @@ const Home: NextPage = () => {
         <h1 className={styles.title}>
           Display your NFTs here!
         </h1>
+        <div>
+          {renderButton()}
+        </div>
 
         <p className={styles.description}>
           Get started by editing{' '}
