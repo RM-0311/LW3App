@@ -68,7 +68,7 @@ const Home: NextPage = () => {
       // If wallet is not connected, display connect wallet button
       if (!walletConnected) {
         return (
-          <button class="my-5 bg-black text-white" onClick={connectWallet}>
+          <button class="absolute top-[30px] right-[100px] px-[10px] py-[5px] rounded-lg bg-black text-white" onClick={connectWallet}>
             Connect Wallet
           </button>
         );
@@ -85,26 +85,26 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <h1 class="text-5xl text-blue-700 font-bold font-mono align-center mt-8">
-          Show us what work you've done!
+          Show us what you've done!
         </h1>
-        <h2 class="text-2xl text-black align-center">
-          To display any Proof of Knowledge NFTs you own, connect your wallet!
+        <h2 class="text-2xl font-bold mt-20 text-black align-center text-center">
+          To display any Proof of Knowledge NFTs you own, <br/>connect your wallet!
         </h2>
         <div>
           {renderButton()}
         </div>
-        <div className={styles.main}>
-          <h2>
+        <div class="flex-1 flex-column justify-center align-center w-3/5">
+          <h3 class="font-bold mt-12 text-xl">
             LearnWeb3 NFTs
-          </h2>
-          <div class="bg-gray-300 h-[300px] px-[20px] align-center">
+          </h3>
+          <div class="bg-gray-300 h-[300px] px-[20px] align-center rounded-xl">
             /** TODO: FETCH NFTs owned by connected address and display by URI here*/  
             
           </div>
-          <h2>
+          <h3 class="font-bold mt-12 text-xl">
             Buildspace NFTs
-          </h2>
-          <div class="bg-gray-300 px-[20px] h-[300px] align-center">
+          </h3>
+          <div class="bg-gray-300 px-[20px] h-[300px] align-center rounded-xl">
             /** TODO: FETCH NFTs owned by connected address and display by URI here*/  
             
           </div>
