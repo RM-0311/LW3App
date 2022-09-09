@@ -4,6 +4,12 @@ import React, { useEffect, useRef, useState } from "react";
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import {
+  LEARNWEB3_NFT_CONTRACT_ADDRESS,
+  BUILDSPACE_NFT_CONTRACT_ADDRESS,
+  LEARNWEB3_NFT_ABI,
+  BUILDSPACE_NFT_ABI,
+} from "../constants";
 import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
@@ -13,6 +19,10 @@ const Home: NextPage = () => {
   const [loading, setLoading] = useState(false);
   // Reference to web3Modal
   const web3ModalRef = useRef();
+  // Balance of LearnWeb3 NFTs
+  const [learnWebBalance, setLearnWebBalance] = useState(0);
+  // Balance of Buildspace NFTs
+  const [buildspaceBalance, setBuildspaceBalance] = useState(0);
 
   /*
     connectWallet: Connects the MetaMask wallet
@@ -27,6 +37,18 @@ const Home: NextPage = () => {
       console.error(err);
     }
   }
+
+  // get balance of LW3 NFTs
+  const getUserLWBalance = async () => {
+    try {
+      const signer = await getProviderOrSigner(true);
+      const learnWebContract = getLearnWebContractInstance(true);
+      const balance = await learnWebContract.balanceOf(signer._getAddress());
+      setLearnWebBalance(balance);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
     /**
    * Returns a Provider or Signer object representing the Ethereum RPC with or without the
@@ -47,33 +69,54 @@ const Home: NextPage = () => {
       throw new Error("Change the network to Polygon!");
     }
     return web3Provider;
-    };
+  };
 
-    // This effect will be called whenever the value of 'walletConnected' changes
-    useEffect(() => {
-      // if wallet is not connected, create a new instance of Web3Modal and connect the MetaMask wallet
-      if (!walletConnected) {
-        // Assign the Web3Modal class to the reference object by setting it's `current` value
-        // The `current` value is persisted throughout as long as this page is open
-        web3ModalRef.current = new Web3Modal({
-          network: "rinkeby",
-          providerOptions: {},
-          disableInjectedProvider: false,
-        });
-        connectWallet();
-      }
-    }, [walletConnected]);
+  // Helper function that creates a new instance of the Learn Web3 NFT Contract
+  // given a provider/signer
+  const getLearnWebContractInstance = (providerOrSigner) => {
+    return new Contract(
+      LEARNWEB3_NFT_CONTRACT_ADDRESS,
+      LEARNWEB3_NFT_ABI,
+      providerOrSigner
+    );
+  };
 
-    const renderButton = () => {
-      // If wallet is not connected, display connect wallet button
-      if (!walletConnected) {
-        return (
-          <button class="absolute top-[30px] right-[100px] px-[10px] py-[5px] rounded-lg bg-black text-white" onClick={connectWallet}>
-            Connect Wallet
-          </button>
-        );
-      }
+  // Helper function that creates a new instance of the Buildspace NFT Contract
+  // given a provider/signer
+  const getBuildspaceContractInstance = (providerOrSigner) => {
+    return new Contract(
+      BUILDSPACE_NFT_CONTRACT_ADDRESS,
+      BUILDSPACE_NFT_ABI,
+      providerOrSigner
+    );
+  };
+
+
+  // This effect will be called whenever the value of 'walletConnected' changes
+  useEffect(() => {
+    // if wallet is not connected, create a new instance of Web3Modal and connect the MetaMask wallet
+    if (!walletConnected) {
+      // Assign the Web3Modal class to the reference object by setting it's `current` value
+      // The `current` value is persisted throughout as long as this page is open
+      web3ModalRef.current = new Web3Modal({
+        network: "rinkeby",
+        providerOptions: {},
+        disableInjectedProvider: false,
+      });
+      connectWallet();
     }
+  }, [walletConnected]);
+
+  const renderButton = () => {
+    // If wallet is not connected, display connect wallet button
+    if (!walletConnected) {
+      return (
+        <button class="absolute top-[30px] right-[100px] px-[10px] py-[5px] rounded-lg bg-black text-white" onClick={connectWallet}>
+          Connect Wallet
+        </button>
+      );
+    }
+  }
 
   return (
     <div className={styles.container}>
@@ -97,14 +140,14 @@ const Home: NextPage = () => {
           <h3 class="font-bold mt-12 text-xl">
             LearnWeb3 NFTs
           </h3>
-          <div class="bg-gray-300 h-[300px] px-[20px] align-center rounded-xl">
+          <div class="bg-gray-300 h-[300px] mt-[10px] px-[20px] align-center rounded border-2 border-black">
             /** TODO: FETCH NFTs owned by connected address and display by URI here*/  
             
           </div>
           <h3 class="font-bold mt-12 text-xl">
             Buildspace NFTs
           </h3>
-          <div class="bg-gray-300 px-[20px] h-[300px] align-center rounded-xl">
+          <div class="bg-gray-300 px-[20px] mt-[10px] h-[300px] align-center rounded border-2 border-black">
             /** TODO: FETCH NFTs owned by connected address and display by URI here*/  
             
           </div>
