@@ -4,25 +4,21 @@ import React, { useEffect, useRef, useState } from "react";
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import {
-  LEARNWEB3_NFT_CONTRACT_ADDRESS,
-  BUILDSPACE_NFT_CONTRACT_ADDRESS,
-  LEARNWEB3_NFT_ABI,
-  BUILDSPACE_NFT_ABI,
-} from "../constants";
 import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
   // walletConnected keeps track of whether or not there is a wallet connected
   const [walletConnected, setWalletConnected] = useState(false);
+  // state variable to store the user's address
+  const [address, setAddress] = useState();
   // Loading is set to true when the site is waiting
   const [loading, setLoading] = useState(false);
   // Reference to web3Modal
   const web3ModalRef = useRef();
   // Balance of LearnWeb3 NFTs
-  const [learnWebBalance, setLearnWebBalance] = useState(0);
+  const [learnWebData, setLearnWebData] = useState([]);
   // Balance of Buildspace NFTs
-  const [buildspaceBalance, setBuildspaceBalance] = useState(0);
+  const [buildspaceData, setBuildspaceData] = useState([]);
 
   /*
     connectWallet: Connects the MetaMask wallet
@@ -38,18 +34,6 @@ const Home: NextPage = () => {
     }
   }
 
-  // get balance of LW3 NFTs
-  const getUserLWBalance = async () => {
-    try {
-      const signer = await getProviderOrSigner(true);
-      const learnWebContract = getLearnWebContractInstance(true);
-      const balance = await learnWebContract.balanceOf(signer._getAddress());
-      setLearnWebBalance(balance);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
     /**
    * Returns a Provider or Signer object representing the Ethereum RPC with or without the
    * signing capabilities of metamask attached
@@ -61,6 +45,7 @@ const Home: NextPage = () => {
     // Access web3modal current value
     const provider = await web3ModalRef.current.connect();
     const web3Provider = new providers.Web3Provider(provider);
+    setAddress(await provider.getAddress());
 
     // Double check that the user is connected to Polygon network
     const { chainId } = await web3Provider.getNetwork();
@@ -71,27 +56,7 @@ const Home: NextPage = () => {
     return web3Provider;
   };
 
-  // Helper function that creates a new instance of the Learn Web3 NFT Contract
-  // given a provider/signer
-  const getLearnWebContractInstance = (providerOrSigner) => {
-    return new Contract(
-      LEARNWEB3_NFT_CONTRACT_ADDRESS,
-      LEARNWEB3_NFT_ABI,
-      providerOrSigner
-    );
-  };
-
-  // Helper function that creates a new instance of the Buildspace NFT Contract
-  // given a provider/signer
-  const getBuildspaceContractInstance = (providerOrSigner) => {
-    return new Contract(
-      BUILDSPACE_NFT_CONTRACT_ADDRESS,
-      BUILDSPACE_NFT_ABI,
-      providerOrSigner
-    );
-  };
-
-
+  
   // This effect will be called whenever the value of 'walletConnected' changes
   useEffect(() => {
     // if wallet is not connected, create a new instance of Web3Modal and connect the MetaMask wallet
@@ -99,12 +64,32 @@ const Home: NextPage = () => {
       // Assign the Web3Modal class to the reference object by setting it's `current` value
       // The `current` value is persisted throughout as long as this page is open
       web3ModalRef.current = new Web3Modal({
-        network: "rinkeby",
+        network: "polygon",
         providerOptions: {},
         disableInjectedProvider: false,
       });
       connectWallet();
     }
+
+    // TODO: FUNCTIONS THAT FETCH THE NFTs OWNED BY THE CONNECTED ADDRESS
+    const get = {method: 'GET'};
+
+      let lWThreeArray = [];
+      let builspaceArray = [];
+
+      // fetch the owned assets in the LearnWeb3 Collection
+      fetch(`https://api.opensea.io/api/v1/assets?owner=${address}&collection=learnweb3&order_direction=asc&limit=20&include_orders=false`, get)
+      .then(response => response.json())
+      .then(response => console.log(response))
+      .catch(err => console.error(err));
+
+      // fetch the owned assets in the Buildspace Collection
+      fetch(`https://api.opensea.io/api/v1/assets?owner=${address}&collection=buildspace-v2&order_direction=asc&limit=20&include_orders=false`, get)
+      .then(response => response.json())
+      .then(response => console.log(response))
+      .catch(err => console.error(err));
+    
+    
   }, [walletConnected]);
 
   const renderButton = () => {
