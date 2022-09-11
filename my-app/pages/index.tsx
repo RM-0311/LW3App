@@ -107,7 +107,7 @@ const Home: NextPage = () => {
     // If wallet is not connected, display connect wallet button
     if (!walletConnected) {
       return (
-        <button class="absolute top-[30px] right-[100px] px-[10px] py-[5px] rounded-lg bg-black text-white" onClick={connectWallet}>
+        <button className="absolute top-[30px] right-[100px] px-[10px] py-[5px] rounded-lg bg-black text-white" onClick={connectWallet}>
           Connect Wallet
         </button>
       );
@@ -143,7 +143,7 @@ const Home: NextPage = () => {
       }
     } else if (!walletConnected) {
       return (
-        <h2 class="font-bold text-center">
+        <h2 className="font-bold text-center">
           Please connect your wallet in order to view your owned NFTs
         </h2>
       )
@@ -159,26 +159,26 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 class="text-5xl text-blue-700 font-bold font-mono align-center mt-8">
+        <h1 className="text-5xl text-blue-700 font-bold font-mono align-center mt-8">
           Show us what you've done!
         </h1>
-        <h2 class="text-2xl font-bold mt-20 text-black align-center text-center">
+        <h2 className="text-2xl font-bold mt-20 text-black align-center text-center">
           To display any Proof of Knowledge NFTs you own, <br/>connect your wallet!
         </h2>
         <div>
           {renderButton()}
         </div>
-        <div class="flex-1 flex-column justify-center align-center w-3/5">
-          <h3 class="font-bold mt-12 text-xl">
+        <div className="flex-1 flex-column justify-center align-center w-3/5">
+          <h3 className="font-bold mt-12 text-xl">
             LearnWeb3 NFTs
           </h3>
-          <div class="bg-gray-300 h-[300px] mt-[10px] px-[20px] align-center rounded border-2 border-black">
+          <div className="bg-gray-300 h-[300px] mt-[10px] px-[20px] align-center rounded border-2 border-black">
             {renderLWThree()} 
           </div>
-          <h3 class="font-bold mt-12 text-xl">
+          <h3 className="font-bold mt-12 text-xl">
             Buildspace NFTs
           </h3>
-          <div class="bg-gray-300 px-[20px] mt-[10px] h-[300px] align-center rounded border-2 border-black">
+          <div className="bg-gray-300 px-[20px] mt-[10px] h-[300px] align-center rounded border-2 border-black">
            {renderBuildspace()}
           </div>
         </div>
