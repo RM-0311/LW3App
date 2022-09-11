@@ -120,7 +120,7 @@ const Home: NextPage = () => {
     if (walletConnected) {
       for (i in learnWebData) {
         return (
-          <img src={i}></img>
+          <Image src={i} alt="nft images here"></Image>
         )
       }
     } else if (!walletConnected) {
@@ -138,7 +138,7 @@ const Home: NextPage = () => {
     if (walletConnected) {
       for (i in buildspaceData) {
         return (
-          <img src={i}></img>
+          <Image src={i} alt="nft images here"></Image>
         )
       }
     } else if (!walletConnected) {
