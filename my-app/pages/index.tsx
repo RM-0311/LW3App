@@ -125,7 +125,7 @@ const Home: NextPage = () => {
       }
     } else if (!walletConnected) {
       return (
-        <h2 class="font-bold text-center">
+        <h2 className="font-bold text-center">
           Please connect your wallet in order to view your owned NFTs
         </h2>
       )
