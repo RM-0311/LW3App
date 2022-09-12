@@ -1,12 +1,14 @@
 import { Contract, providers, utils } from "ethers";
 import Web3Modal from "web3modal";
 import React, { useEffect, useRef, useState } from "react";
-import type { NextPage } from 'next'
+import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import { fetchData } from "../components/UI/FetchData";
 
-const Home: NextPage = () => {
+const Home: NextPage = ({ data }) => {
+  console.log(data)
   // walletConnected keeps track of whether or not there is a wallet connected
   const [walletConnected, setWalletConnected] = useState(false);
   // state variable to store the user's address
@@ -45,7 +47,7 @@ const Home: NextPage = () => {
     // Access web3modal current value
     const provider = await web3ModalRef.current.connect();
     const web3Provider = new providers.Web3Provider(provider);
-    setAddress(await utils.getAddress(provider));
+    setAddress(await ethers.utils.getAddress(provider));
 
     // Double check that the user is connected to Polygon network
     const { chainId } = await web3Provider.getNetwork();
@@ -72,34 +74,17 @@ const Home: NextPage = () => {
     }
 
     // TODO: FUNCTIONS THAT FETCH THE NFTs OWNED BY THE CONNECTED ADDRESS
-    // const get = {method: 'GET'};
+    
 
-    //   let lWThreeArray = [];
-    //   let buildspaceArray = [];
 
       // fetch the owned assets in the LearnWeb3 Collection
-      // fetch(`https://api.opensea.io/api/v1/assets?owner=${address}&collection=learnweb3&order_direction=asc&limit=20&include_orders=false`, get)
-      // .then(response => response.json())
-      // .then(nftArray => {
-      //   console.log(nftArray.assets)
-      //     nftArray.assets.forEach(eachNFT =>{
-      //       lWThreeArray.push(eachNFT.image_url)
-      //     })
-      // },
-
-      // setLearnWebData(lWThreeArray),
+      fetch(`https://api.opensea.io/api/v1/assets?owner=${address}&collection=learnweb3&order_direction=asc&limit=20&include_orders=false`, get)
+      
     
       // fetch the owned assets in the Buildspace Collection
-      // fetch(`https://api.opensea.io/api/v1/assets?owner=${address}&collection=buildspace-v2&order_direction=asc&limit=20&include_orders=false`, get)
-      // .then(response => response.json())
-      // .then(nftArray => {
-      //   console.log(nftArray.assets)
-      //     nftArray.assets.forEach(eachNFT =>{
-      //       buildspaceArray.push(eachNFT.image_url)
-      //     })
-      // },
- 
-      // setBuildspaceData(buildspaceArray),
+      fetch(`https://api.opensea.io/api/v1/assets?owner=${address}&collection=buildspace-v2&order_direction=asc&limit=20&include_orders=false`, get)
+      
+
     
   }, [walletConnected]);
 
@@ -114,42 +99,7 @@ const Home: NextPage = () => {
     }
   }
 
-  // Render the Learn Web3 NFTs that the User owns
-  const renderLWThree = () => {
-    // If wallet is not connected, display message to connect wallet
-    if (walletConnected) {
-      for (i in learnWebData) {
-        return (
-          <Image src={i} alt="nft images here"></Image>
-        )
-      }
-    } else if (!walletConnected) {
-      return (
-        <h2 className="font-bold text-center">
-          Please connect your wallet in order to view your owned NFTs
-        </h2>
-      )
-    };
-  }
-
-  // Render the Buildspace NFTs that the User owns
-  const renderBuildspace = () => {
-    // If wallet is not connected, display message to connect wallet
-    if (walletConnected) {
-      for (i in buildspaceData) {
-        return (
-          <Image src={i} alt="nft images here"></Image>
-        )
-      }
-    } else if (!walletConnected) {
-      return (
-        <h2 className="font-bold text-center">
-          Please connect your wallet in order to view your owned NFTs
-        </h2>
-      )
-    };
-  }
-
+  
   return (
     <div className={styles.container}>
       <Head>
@@ -173,7 +123,16 @@ const Home: NextPage = () => {
             LearnWeb3 NFTs
           </h3>
           <div className="bg-gray-300 h-[300px] mt-[10px] px-[20px] align-center rounded border-2 border-black">
-            {renderLWThree()} 
+            <div className={styles.grid}>
+              {
+                data.map(({ id, external_link, name, image_preview_url })) => (
+                  <a key={id} href={external_link} className={styles.card}>
+                    <h3>{name}</h3>
+                    <img src={image_preview_url} alt={name} />
+                  </a>
+                ))
+              }
+            </div>
           </div>
           <h3 className="font-bold mt-12 text-xl">
             Buildspace NFTs
@@ -198,6 +157,27 @@ const Home: NextPage = () => {
       </footer>
     </div>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async context => {
+  // Retrieve Assets from Opensea API
+  const url = `https://api.opensea.io/api/v1/assets?owner=0x66d5c8cD7cDf80B40dd4b0ffDB5C664b17E14099&collection=learnweb3&order_direction=asc&limit=20&include_orders=false`
+  const options = { method: 'GET' }
+  const data = await fetchData(url, options)
+
+  if (!data) {
+    return {
+      notFound: true,
+    }
+  }
+
+  // console.log('api', data.assets)
+
+  return {
+    props: {
+      data: data.assets,
+    }, // will be passed to the page component as props
+  }
 }
 
 export default Home
